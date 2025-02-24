@@ -39,19 +39,13 @@
                         </label>
                         <select multiple name="letters[]" id="letters"> 
                             <?php
-                            $alphabet = ['А', 'а', 'Б', 'б', 'В', 'в', 'Г', 'г', 'Д', 'д',
+                            $alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 
-                            'Е', 'е', 'Ё', 'ё', 'Ж', 'ж', 'З', 'з', 'И', 'и',
-                    
-                            'Й', 'й', 'К', 'к', 'Л', 'л', 'М', 'м', 'Н', 'н',
-                    
-                            'О', 'о', 'П', 'п', 'Р', 'р', 'С', 'с', 'Т', 'т',
-                    
-                            'У', 'у', 'Ф', 'ф', 'Х', 'х', 'Ц', 'ц', 'Ч', 'ч',
-                    
-                            'Ш', 'ш', 'Щ', 'щ', 'Ъ', 'ъ', 'Ы', 'ы', 'Ь', 'ь',
-                    
-                            'Э', 'э', 'Ю', 'ю', 'Я', 'я'];
+                                        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+
+                                        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+
+                                        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
                             foreach($alphabet as $elem){
                                 echo "<option value=\"$elem\">$elem</option>";
@@ -84,44 +78,17 @@
                 .then(data=>{
                     if(data.error){
                         document.querySelector('#error').textContent = `${data.error}`;
-                        console.log(data); //Выводим результат в консоль
                     } else {
                         document.querySelector('#error').textContent = ` `;
                         const lettersString = data.generatedlogin;//Преобразуем массив букв в строку
                         login.textContent = `Ваш новый логин: ${lettersString}`;
-                        console.log(data); //Выводим результат в консоль
-                    }
-                    
+                    }                    
                 })
                 .catch(error => {
                     console.error('Ошибка:', error);
+                    document.querySelector('#error').textContent = `${error}`;
                 });
-
-            });
-
-
-            // const formData = new FormData();
-            // const numbers = document.querySelector('#numbers');
-            // const letters = document.querySelector('#letters');
-            
-            // formData.append("numbers", numbers);
-            // formData.append("letters", letters);
-
-            // try{
-            //     const response = await fetch('/generator.php', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: formData,
-            // });
-            // const result = await response.json();
-            // console.log(JSON.stringify(result)); 
-            // }catch (error) {
-            //     console.error("Ошибка:", error);
-            // }
-
-            
+            });            
         </script>        
     </body>
 </html>
