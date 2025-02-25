@@ -1,87 +1,92 @@
-<?php
-function generateLogin(){
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Генератор логинов">
+        <title>Генератор логинов</title>
+        <link rel="stylesheet" href="./style.css">
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+    <body>
+        <div id="wrapper">
+            <header>
+                <img src="logo.png" alt="Генератор логинов" width="150" height="150">
+            </header>
+            <div id="content">
+                <h1>Генератор логинов</h1>
+                <form action="generator.php" method="POST" class="form" id="myForm">
+                    <div class="numbers">
+                        <label name="numbers">
+                        Выберите количество букв в логине.
+                        </label>
+                        
+                        <select name="numbers" id="numbers">
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                        </select>
+                        <span id="error"></span>
+                    </div>
+                    <div class="letters">
+                        <label name="letters">
+                        Выберите первую букву логина.
+                        </label>
+                        <select name="letters" id="letters"> 
+                            <?php
+                            $alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 
-    $vowels = 'aeiou';
+                                        'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 
-    $consonants = 'bcdfghjklmnpqrstvwxzy';
+                                        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 
-    $strNew = ''; 
+                                        'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-    $allNumbers = $_POST['numbers'];
+                            foreach($alphabet as $elem){
+                                echo "<option value=\"$elem\">$elem</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <input type="submit" class="submit" value="Сгенерировать логин">
+                </form>
+                <div id="login">
+                    <p></p>
+                </div>
+            </div>
+            <div id="footer">
+                <span>Гребенёк Татьяна © 2025</span>
+            </div>
+        </div>
+        <script>
+            document.getElementById('myForm').addEventListener('submit', function(event){
+                event.preventDefault();//Предотвратить обычную отправку формы
+                
+                const formData = new FormData(this);//Создаем объект FormData
+                const login = document.querySelector('#login p');
 
-    $letters = isset($_POST['letters']) ? $_POST['letters'] : [];
-
-
-    if (empty($letters)) {
-
-        // Если не переданы буквы, просто генерируем случайный логин
-
-        for($i = 0; $i < $allNumbers; $i++) {
-
-            if($i % 2 == 0) {
-
-                $strNew .= $vowels[mt_rand(0, strlen($vowels) - 1)];
-
-            } else {
-
-                $strNew .= $consonants[mt_rand(0, strlen($consonants) - 1)];
-
-            }
-
-        }
-
-    } else {
-
-        // Используем переданные буквы для создания логина
-
-        $firstCharacter = substr($letters, 0, 1); // Получаем первый символ из строки
-
-        // Если первый символ - гласный, следующий должен быть согласным и наоборот.
-
-        $strNew .= $firstCharacter; // Начинаем с первого символа
-
-        $currentIsVowel = in_array($firstCharacter, str_split($vowels));
-
-
-        for ($i = 1; $i < $allNumbers; $i++) {
-
-            if ($currentIsVowel) {
-
-                // Если текущий символ гласный, добавляем согласный
-
-                $nextChar = $consonants[mt_rand(0, strlen($consonants) - 1)];
-
-                $strNew .= $nextChar;
-
-                $currentIsVowel = false; // Меняем состояние, ожидаем гласный
-               
-            } else {
-
-                 // Если текущий символ согласный, добавляем гласный
-
-                 $nextChar = $vowels[mt_rand(0, strlen($vowels) - 1)];
-
-                 $strNew .= $nextChar;
- 
-                 $currentIsVowel = true; // Меняем состояние, ожидаем согласный             
-
-            }
-
-        }
-
-    }
-    
-    $strNew = ucfirst($strNew);
-
-    $response = ['generatedlogin' => $strNew];
-
-    header('Content-Type: application/json');
-
-    echo json_encode($response);
-
-}
-
-
-generateLogin();
-
-?>
+                fetch('generator.php', {//Отправляем данные на сервер
+                    method:'POST',
+                    body:formData,
+                })
+                .then(response => response.json())//Обрабатываем ответ в формате JSON
+                .then(data=>{
+                    if(data.error){
+                        document.querySelector('#error').textContent = `${data.error}`;
+                    } else {
+                        document.querySelector('#error').textContent = ` `;
+                        const lettersString = data.generatedlogin;//Преобразуем массив букв в строку
+                        login.textContent = `Ваш новый логин: ${lettersString}`;
+                    }                    
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    document.querySelector('#error').textContent = `${error}`;
+                });
+            });            
+        </script>        
+    </body>
+</html>
